@@ -50,7 +50,7 @@ def sort_samples_by_priority(samples: list) -> list:
     stat_samples = [s for s in samples if s.get_priority() == "STAT"]
     urgent_samples = [s for s in samples if s.get_priority() == "URGENT"]
     routine_samples = [s for s in samples if s.get_priority() == "ROUTINE"]
-    ## Phase de rangement des liste en fonction de l'heure d'arrvée pour plus tard
+    ## Phase de rangement des listes en fonction de l'heures d'arrvée pour plus tard
     # Concaténation de sortie par ordre d'importande
     return stat_samples + urgent_samples + routine_samples
 
@@ -84,9 +84,6 @@ def get_full_time(schedule: list) -> int:
     for state in schedule:
         start = earliest_time(start,state["startTime"])
         end = latest_time(end,state["endTime"])
-    print(start)
-    print(end)
-    print(minutes_between(start,end))
     return minutes_between(start,end)
 
 def has_overlap(start1: str, end1: str, start2: str, end2: str) -> bool:
@@ -117,10 +114,8 @@ def get_technician_available_time(schedule: list, technician_id: str, default_st
         for s in schedule
         if s["technicianId"] == technician_id
     ]
-
     if not end_times:
         return default_start
-
     return max(end_times)
 
 def get_equipment_available_time(schedule: list, equipment_id: str, default_start: str) -> str:
