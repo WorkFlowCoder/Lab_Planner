@@ -1,16 +1,11 @@
 from lab_planner.planner.planify_lab import planify_lab
-from pathlib import Path
+from lab_planner.planner.utils import load_data_as_objects
 import json
-
-def load_json_data(file: str) -> dict:
-    data_path = Path(__file__).parent / "data" / file
-    with open(data_path,"r") as f:
-        return json.load(f)
 
 def main():
 
     try:
-        data = load_json_data("example.json")
+        data = load_data_as_objects("example_2.json")
     except FileNotFoundError:
         print("Fichier JSON introuvable.")
         return
