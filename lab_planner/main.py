@@ -3,9 +3,8 @@ from lab_planner.planner.utils import load_data_as_objects
 import json
 
 def main():
-
     try:
-        data = load_data_as_objects("example_2.json")
+        data = load_data_as_objects("example_3.json")
     except FileNotFoundError:
         print("Fichier JSON introuvable.")
         return
@@ -13,10 +12,8 @@ def main():
         print("Erreur : le fichier JSON est mal formé.")
         return
 
-    #print(data)
     result = planify_lab(data)
-    print("Schedule")
-    print(result)
+    #print(result)
 
 if __name__ == "__main__":
     main()
