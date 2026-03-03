@@ -1,0 +1,17 @@
+[project]
+name = "lab-planner"
+version = "0.1.0"
+description = "Simple medical lab scheduling system with priority-based resource allocation."
+authors = [
+    {name = "Julia"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+packages = [{include = "lab_planner"}]
+dependencies = [
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
