@@ -1,12 +1,24 @@
 class Technician:
     def __init__(
-        self, id: str, name: str, speciality: str, startTime: str, endTime: str
+        self,
+        id: str,
+        name: str,
+        speciality: str,
+        startTime: str,
+        endTime: str,
+        efficiency: float = 1.0,
+        lunchBreak: str = "",
     ):
         self.id = id
         self.name = name
-        self.speciality = speciality
+        if isinstance(speciality, str):
+            self.speciality = [speciality]
+        else:
+            self.speciality = speciality
         self.startTime = startTime
         self.endTime = endTime
+        self.efficiency = efficiency
+        self.lunchBreak = lunchBreak
 
     # --- Getters ---
 
@@ -24,6 +36,15 @@ class Technician:
 
     def get_endTime(self) -> str:
         return self.endTime
+
+    def get_efficiency(self) -> float:
+        return self.efficiency
+
+    def has_lunchBreak(self) -> bool:
+        return not self.lunchBreak == ""
+
+    def get_lunchBreak(self) -> str:
+        return self.lunchBreak
 
     def to_string(self) -> str:
         return (

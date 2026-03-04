@@ -40,7 +40,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(techs[0].get_id(), "T001")
         self.assertEqual(techs[0].get_startTime(), "08:00")
         self.assertEqual(techs[0].get_endTime(), "17:00")
-        self.assertEqual(techs[0].get_speciality(), "BLOOD")
+        self.assertEqual(techs[0].get_speciality(), ["BLOOD"])
 
         # Vérifier les équipements
         equip = result["equipment"]

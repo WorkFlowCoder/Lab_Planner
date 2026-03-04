@@ -14,30 +14,38 @@ def load_data_as_objects(file: str):
         data = json.load(f)
     samples = [
         Sample(
-            id=s["id"],
-            type=s["type"],
-            priority=s["priority"],
-            analysisTime=s["analysisTime"],
-            arrivalTime=s["arrivalTime"],
-            patientId=s["patientId"],
+            id=sample["id"],
+            type=sample["type"],
+            priority=sample["priority"],
+            analysisTime=sample["analysisTime"],
+            arrivalTime=sample["arrivalTime"],
+            patientId=sample.get("patientId", sample["id"]),
+            analysisType=sample.get("analysisType", ""),
         )
-        for s in data.get("samples", [])
+        for sample in data.get("samples", [])
     ]
     technicians = [
         Technician(
-            id=t["id"],
-            name=t.get("name", ""),
-            speciality=t["speciality"],
-            startTime=t["startTime"],
-            endTime=t["endTime"],
+            id=technician["id"],
+            name=technician.get("name", ""),
+            speciality=technician.get("speciality", technician.get("specialty", "")),
+            startTime=technician["startTime"],
+            endTime=technician["endTime"],
+            efficiency=technician.get("efficiency", 1.0),
+            lunchBreak=technician.get("lunchBreak", ""),
         )
-        for t in data.get("technicians", [])
+        for technician in data.get("technicians", [])
     ]
     equipments = [
         Equipment(
-            id=e["id"], name=e.get("name", ""), type=e["type"], available=e["available"]
+            id=equipement["id"],
+            name=equipement.get("name", ""),
+            type=equipement["type"],
+            available=equipement.get("available", True),
+            capacity=equipement.get("capacity", 1),
+            cleaningTime=equipement.get("cleaningTime", 1),
         )
-        for e in data.get("equipment", [])
+        for equipement in data.get("equipment", [])
     ]
 
     return {"samples": samples, "technicians": technicians, "equipment": equipments}

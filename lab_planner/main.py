@@ -5,7 +5,7 @@ import json
 
 def main():
     try:
-        data = load_data_as_objects("example_3.json")
+        data = load_data_as_objects("example_inter.json")
     except FileNotFoundError:
         print("Fichier JSON introuvable.")
         return

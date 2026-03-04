@@ -1,4 +1,5 @@
 from lab_planner.planner.utils import get_full_time
+from lab_planner.planner.utils import minutes_between
 
 
 class Metrics:
@@ -7,11 +8,22 @@ class Metrics:
         self.total_time = 0
         self.efficiency = 0.0
         self.conflicts = 0
+        self.averageWaitTime = 0.0
 
     def compute(self):
         self.compute_total_time()
         self.compute_efficiency()
         self.compute_conflicts()
+        self.compute_averageWaitTime()
+
+    def compute_averageWaitTime(self):
+        self.averageWaitTime = 0.0
+        samples = self.schedule.get_samples()
+        for sample in samples:
+            self.averageWaitTime += minutes_between(
+                sample.arrivalTime, sample.start_time
+            )
+        self.averageWaitTime /= len(samples)
 
     def compute_total_time(self):
         self.total_time = get_full_time(self.schedule.get_schedule())
@@ -44,4 +56,5 @@ class Metrics:
             "total_time": self.total_time,
             "efficiency": self.efficiency,
             "conflicts": self.conflicts,
+            "averageWaitTime": self.averageWaitTime,
         }

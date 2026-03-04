@@ -40,6 +40,12 @@ class TestBasicSheduling(unittest.TestCase):
         s3 = Sample("S3", "BLOOD", "URGENT", 15, "08:20", "P3")
         scheduler = Scheduler([s1, s2, s3], [], [])
         scheduler.sort_samples_by_priority()
-        self.assertEqual([s.id for s in scheduler.samples], ["S1", "S2", "S3"])
+        self.assertEqual([s.id for s in scheduler.samples], ["S2", "S1", "S3"])
 
-    # Ajout avec l'organisation par heure d'arrivé !!
+    def test_sort_samples_by_priority_3(self):
+        s1 = Sample("S1", "BLOOD", "STAT", 30, "10:30", "P1")
+        s2 = Sample("S2", "URINE", "STAT", 20, "08:30", "P2")
+        s3 = Sample("S3", "BLOOD", "STAT", 15, "08:00", "P3")
+        scheduler = Scheduler([s1, s2, s3], [], [])
+        scheduler.sort_samples_by_priority()
+        self.assertEqual([s.id for s in scheduler.samples], ["S3", "S2", "S1"])

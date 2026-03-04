@@ -7,6 +7,7 @@ class Sample:
         analysisTime: int,
         arrivalTime: str,
         patientId: str,
+        analysisType: str = "",
     ):
         self.id = id
         self.type = type
@@ -14,10 +15,11 @@ class Sample:
         self.analysisTime = analysisTime
         self.arrivalTime = arrivalTime
         self.patientId = patientId
+        self.analysisType = analysisType
 
         self.technician_id = None
         self.equipment_id = None
-        self.start_time = None
+        self.start_time = self.arrivalTime
         self.end_time = None
 
     # --- Getters ---
@@ -34,11 +36,17 @@ class Sample:
     def get_analysisTime(self) -> int:
         return self.analysisTime
 
+    def get_analysisType(self) -> str:
+        return self.analysisType
+
     def get_arrivalTime(self) -> str:
         return self.arrivalTime
 
     def get_patientId(self) -> str:
         return self.patientId
+
+    def get_(self) -> str:
+        return self.analysisType
 
     def to_string(self) -> str:
         return (
