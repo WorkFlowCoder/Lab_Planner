@@ -53,4 +53,7 @@ sh run_tests.sh
 ## Evolution depuis la version SIMPLE
 
 - Triage par spécialisation et heure de disponibilité
+
 - Calcul du temps moyen d'attente
+
+- Utilisation en parrallèle de l'équippement via la capacité

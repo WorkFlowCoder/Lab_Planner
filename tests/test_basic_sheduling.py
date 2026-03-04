@@ -5,6 +5,7 @@ from lab_planner.planner.utils import load_data_as_objects
 from lab_planner.models.scheduler import Scheduler
 from lab_planner.models.metrics import Metrics
 from lab_planner.models.sample import Sample
+from lab_planner.models.equipment import Equipment
 
 
 class TestBasicSheduling(unittest.TestCase):
@@ -163,13 +164,23 @@ class TestBasicSheduling(unittest.TestCase):
             assert scheduler.get_technician_available_time(tech, time) == out
 
     def test_get_equipment_available_time(self):
-        scheduler = Scheduler([], [], [])
-        scheduler.set_schedule(
-            [
-                {"equipmentId": "E1", "endTime": "09:30"},
-                {"equipmentId": "E1", "endTime": "10:15"},
-                {"equipmentId": "E2", "endTime": "09:45"},
-            ]
+        equipments = [
+            Equipment("E1", "EQUI01", "BLOOD", True, 1, 1),
+            Equipment("E2", "EQUI02", "BLOOD", True, 1, 1),
+        ]
+        scheduler = Scheduler([], [], equipments)
+        schedule = [
+            {"equipmentId": "E1", "startTime": "08:00", "endTime": "09:30"},
+            {"equipmentId": "E1", "startTime": "09:45", "endTime": "10:15"},
+            {"equipmentId": "E2", "startTime": "08:00", "endTime": "09:45"},
+        ]
+        scheduler.set_schedule(schedule)
+        duration = 30
+        assert (
+            scheduler.get_equipment_available_time("E1", "08:00", duration, 1)
+            == "10:15"
         )
-        assert scheduler.get_equipment_available_time("E1", "08:00") == "10:15"
-        assert scheduler.get_equipment_available_time("E3", "08:00") == "08:00"
+        assert (
+            scheduler.get_equipment_available_time("E2", "08:00", duration, 1)
+            == "09:45"
+        )
