@@ -38,7 +38,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(len(techs), 1)
         self.assertIsInstance(techs[0], Technician)
         self.assertEqual(techs[0].get_id(), "T001")
-        self.assertEqual(techs[0].get_startTime(), "08:00")
+        self.assertEqual(techs[0].get_start(), "08:00")
         self.assertEqual(techs[0].get_endTime(), "17:00")
         self.assertEqual(techs[0].get_speciality(), ["BLOOD"])
 

@@ -31,7 +31,7 @@ class Technician:
     def get_speciality(self) -> str:
         return self.speciality
 
-    def get_startTime(self) -> str:
+    def get_start(self) -> str:
         return self.startTime
 
     def get_endTime(self) -> str:
@@ -48,6 +48,7 @@ class Technician:
 
     def to_string(self) -> str:
         return (
-            f"[Technician_id={self.id}, name={self.name}, speciality={self.speciality}, "
+            f"[Technician_id={self.id}, name={self.name},"
+            f" speciality={self.speciality}, "
             f"startTime={self.startTime}, endTime={self.endTime}]"
         )

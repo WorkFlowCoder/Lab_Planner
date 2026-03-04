@@ -156,8 +156,11 @@ class TestBasicSheduling(unittest.TestCase):
                 {"technicianId": "T2", "endTime": "09:45"},
             ]
         )
-        assert scheduler.get_technician_available_time("T1", "08:00") == "10:15"
-        assert scheduler.get_technician_available_time("T3", "08:00") == "08:00"
+        for tech, time, out in [
+            ("T1", "08:00", "10:15"),
+            ("T3", "08:00", "08:00"),
+        ]:
+            assert scheduler.get_technician_available_time(tech, time) == out
 
     def test_get_equipment_available_time(self):
         scheduler = Scheduler([], [], [])

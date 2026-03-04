@@ -39,7 +39,7 @@ class Sample:
     def get_analysisType(self) -> str:
         return self.analysisType
 
-    def get_arrivalTime(self) -> str:
+    def get_arrival(self) -> str:
         return self.arrivalTime
 
     def get_patientId(self) -> str:
@@ -50,9 +50,13 @@ class Sample:
 
     def to_string(self) -> str:
         return (
-            f"[Sample_id={self.id}, type={self.type}, priority={self.priority}, "
-            f"analysisTime={self.analysisTime}, arrivalTime={self.arrivalTime}, "
-            f"patientId={self.patientId}, technician_id={self.technician_id}, "
-            f"equipment_id={self.equipment_id}, start_time={self.start_time}, "
+            f"[Sample_id={self.id}, type={self.type}"
+            f", priority={self.priority}, "
+            f"analysisTime={self.analysisTime}, "
+            f"arrivalTime={self.arrivalTime}, "
+            f"patientId={self.patientId}, "
+            f"technician_id={self.technician_id}, "
+            f"equipment_id={self.equipment_id}, "
+            f"start_time={self.start_time}, "
             f"end_time={self.end_time}]"
         )

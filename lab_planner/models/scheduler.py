@@ -1,6 +1,7 @@
 from lab_planner.planner.utils import add_minutes
 from lab_planner.planner.utils import latest_time
 from datetime import datetime
+from itertools import chain
 
 fmt = "%H:%M"
 
@@ -20,20 +21,19 @@ class Scheduler:
 
     def sort_samples_by_priority(self):
         # Triage des samples
-        stat_samples = [s for s in self.samples if s.get_priority() == "STAT"]
-        urgent_samples = [s for s in self.samples if s.get_priority() == "URGENT"]
-        routine_samples = [s for s in self.samples if s.get_priority() == "ROUTINE"]
-        list_of_priority = [stat_samples, urgent_samples, routine_samples]
+        samples = self.samples
+        stat_samples = [s for s in samples if s.get_priority() == "STAT"]
+        urgent_samples = [s for s in samples if s.get_priority() == "URGENT"]
+        routine_samples = [s for s in samples if s.get_priority() == "ROUTINE"]
+        list_priority = [stat_samples, urgent_samples, routine_samples]
         for case in range(3):
-            list_of_priority[case] = sorted(
-                list_of_priority[case],
-                key=lambda s: datetime.strptime(s.get_arrivalTime(), fmt),
+            list_priority[case] = sorted(
+                list_priority[case],
+                key=lambda s: datetime.strptime(s.get_arrival(), fmt),
             )
-        self.samples = [
-            sample for priority_case in list_of_priority for sample in priority_case
-        ]
+        self.samples = list(chain.from_iterable(list_priority))
 
-    def get_samples(self):
+    def get_samples(self) -> list:
         return self.samples
 
     def find_technicians(self, sample) -> list:
@@ -50,14 +50,12 @@ class Scheduler:
         # Triage des techniciens en fonction de l'heure de disponibilité
         technicians = sorted(
             technicians,
-            key=lambda technician: (
-                "GENERAL" in technician.get_speciality(),
+            key=lambda tech: (
+                "GENERAL" in tech.get_speciality(),
                 datetime.strptime(
                     self.get_technician_available_time(
-                        technician.get_id(),
-                        latest_time(
-                            sample.get_arrivalTime(), technician.get_startTime()
-                        ),
+                        tech.get_id(),
+                        latest_time(sample.get_arrival(), tech.get_start()),
                     ),
                     fmt,
                 ),
@@ -70,17 +68,16 @@ class Scheduler:
         technicians = self.find_technicians(sample)
         sample.technician_id = technicians[0].get_id()
         equipement = [
-            e
+            e  # un équipement
             for e in self.equipment
             if (e.get_type() == sample.get_type() and e.get_available())
         ]
         sample.equipment_id = equipement[0].get_id()
-        ### Meilleur triage des équipements ?
 
         # Prendre un créneau avec le premier qui arrive
-        horaire_commun = latest_time(
-            sample.get_arrivalTime(), technicians[0].get_startTime()
-        )
+        arrival_time = sample.get_arrival()
+        technician_arrival = technicians[0].get_start()
+        horaire_commun = latest_time(arrival_time, technician_arrival)
         start_for_technicien = self.get_technician_available_time(
             sample.technician_id, horaire_commun
         )
@@ -104,9 +101,13 @@ class Scheduler:
     def get_technician_available_time(
         self, technician_id: str, default_start: str
     ) -> str:
-        end_times = [
-            s["endTime"] for s in self.schedule if s["technicianId"] == technician_id
-        ]
+        key = "technicianId"
+        end_times = list(
+            map(
+                lambda s: s["endTime"],
+                filter(lambda s: s[key] == technician_id, self.schedule),
+            )
+        )
         if not end_times:
             return default_start
         return max(end_times)
@@ -114,9 +115,13 @@ class Scheduler:
     def get_equipment_available_time(
         self, equipment_id: str, default_start: str
     ) -> str:
-        end_times = [
-            s["endTime"] for s in self.schedule if s["equipmentId"] == equipment_id
-        ]
+        key = "equipmentId"
+        end_times = list(
+            map(
+                lambda s: s["endTime"],
+                filter(lambda s: s[key] == equipment_id, self.schedule),
+            )
+        )
         if not end_times:
             return default_start
         return max(end_times)

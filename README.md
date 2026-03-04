@@ -52,4 +52,5 @@ sh run_tests.sh
 
 ## Evolution depuis la version SIMPLE
 
-- a venir
+- Triage par spécialisation et heure de disponibilité
+- Calcul du temps moyen d'attente

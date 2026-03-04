@@ -29,7 +29,8 @@ class Metrics:
         self.total_time = get_full_time(self.schedule.get_schedule())
 
     def compute_efficiency(self):
-        sum_of_time = sum(s.get_analysisTime() for s in self.schedule.get_samples())
+        samples = self.schedule.get_samples()
+        sum_of_time = sum(s.get_analysisTime() for s in samples)
         self.efficiency = round((sum_of_time / self.total_time) * 100, 1)
 
     def compute_conflicts(self):
@@ -39,8 +40,8 @@ class Metrics:
             for j in range(i + 1, len(schedule_res)):
                 s1 = schedule_res[i]
                 s2 = schedule_res[j]
-                overlap = (
-                    s1["startTime"] < s2["endTime"] and s2["startTime"] < s1["endTime"]
+                overlap = (s1["startTime"] < s2["endTime"]) and (
+                    s2["startTime"] < s1["endTime"]
                 )
                 # Recherche d'un conflit
                 if s1["technicianId"] == s2["technicianId"] and overlap:

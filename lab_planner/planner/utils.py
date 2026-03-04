@@ -28,7 +28,9 @@ def load_data_as_objects(file: str):
         Technician(
             id=technician["id"],
             name=technician.get("name", ""),
-            speciality=technician.get("speciality", technician.get("specialty", "")),
+            speciality=technician.get("speciality")
+            or technician.get("specialty")
+            or "",
             startTime=technician["startTime"],
             endTime=technician["endTime"],
             efficiency=technician.get("efficiency", 1.0),
@@ -48,7 +50,7 @@ def load_data_as_objects(file: str):
         for equipement in data.get("equipment", [])
     ]
 
-    return {"samples": samples, "technicians": technicians, "equipment": equipments}
+    return dict(samples=samples, technicians=technicians, equipment=equipments)
 
 
 def latest_time(time1: str, time2: str) -> str:
