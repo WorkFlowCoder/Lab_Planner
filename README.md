@@ -84,7 +84,7 @@ poetry run python3 -m lab_planner.main > rapport_planning.txt
 
 - Faire une version plus intelligente de la pause déjeuner
 
-- Intégration de metrics en incorporant le coefficient
+- Intégration de metrics supplémentaires
 
 - Intégration du nettoyage des équipements
 

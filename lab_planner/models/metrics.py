@@ -8,7 +8,9 @@ class Metrics:
         self.total_time = 0
         self.efficiency = 0.0
         self.conflicts = 0
-        self.averageWaitTime = 0.0
+        self.averageWaitTimeSTAT = 0.0
+        self.averageWaitTimeURGENT = 0.0
+        self.averageWaitTimeROUTINE = 0.0
 
     def compute(self):
         self.compute_total_time()
@@ -17,13 +19,20 @@ class Metrics:
         self.compute_averageWaitTime()
 
     def compute_averageWaitTime(self):
-        self.averageWaitTime = 0.0
+        self.averageWaitTimeSTAT = self.compute_average_type("STAT")
+        self.averageWaitTimeURGENT = self.compute_average_type("URGENT")
+        self.averageWaitTimeROUTINE = self.compute_average_type("ROUTINE")
+
+    def compute_average_type(self, type: str) -> float:
         samples = self.schedule.get_samples()
-        for sample in samples:
-            self.averageWaitTime += minutes_between(
-                sample.arrivalTime, sample.start_time
-            )
-        self.averageWaitTime /= len(samples)
+        average = 0.0
+        samples_type = list(filter(lambda s: s.get_priority() == type, samples))
+        if len(samples_type) == 0:
+            return average
+        for sample in samples_type:
+            average += minutes_between(sample.arrivalTime, sample.start_time)
+        average /= len(samples_type)
+        return average
 
     def compute_total_time(self):
         self.total_time = get_full_time(self.schedule.get_schedule())
@@ -57,5 +66,9 @@ class Metrics:
             "total_time": self.total_time,
             "efficiency": self.efficiency,
             "conflicts": self.conflicts,
-            "averageWaitTime": self.averageWaitTime,
+            "averageWaitTime": {
+                "STAT": self.averageWaitTimeSTAT,
+                "URNGET": self.averageWaitTimeURGENT,
+                "ROUTINE": self.averageWaitTimeROUTINE,
+            },
         }
