@@ -61,3 +61,31 @@ sh run_tests.sh
 - triage des equipements par heure de début (afin de traiter au plus vite les STAT)
 
 - Mise en place de la maintenance
+
+- Mise en place naïve de la pause déjeuner
+
+## Stratégies
+
+- Le scheduler teste chaque combinaison possible de techniciens spécialisés et d'équipements compatibles pour chaque échantillon
+
+- Mise en évidence de la priorité 'STAT' lors du moment de pause
+
+- Utilisation de la capacité pour faire en parrallèle sur un équipement
+
+## Export et Analyse des Résultats
+
+Le scheduler génère un rapport de détaillé. Vous pouvez rediriger la sortie pour analyser les indicateurs clés :
+
+```bash
+poetry run python3 -m lab_planner.main > rapport_planning.txt
+```
+
+## Avancement futur
+
+- Faire une version plus intelligente de la pause déjeuner
+
+- Intégration de metrics en incorporant le coefficient
+
+- Intégration du nettoyage des équipements
+
+- Intégration dans la sortie des actions (pause déjeuner sauté et netoyage)

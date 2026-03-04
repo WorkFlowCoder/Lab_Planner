@@ -149,7 +149,11 @@ class TestBasicSheduling(unittest.TestCase):
         assert metric.conflicts == 0
 
     def test_get_technician_available_time(self):
-        scheduler = Scheduler([], [], [])
+        s1 = Sample("S1", "BLOOD", "ROUTINE", 30, "08:00", "P1")
+        s1.technician_id = "T1"
+        s2 = Sample("S2", "BLOOD", "ROUTINE", 30, "08:00", "P1")
+        s2.technician_id = "T2"
+        scheduler = Scheduler([s1], [], [])
         scheduler.set_schedule(
             [
                 {"technicianId": "T1", "endTime": "09:30"},
@@ -157,11 +161,8 @@ class TestBasicSheduling(unittest.TestCase):
                 {"technicianId": "T2", "endTime": "09:45"},
             ]
         )
-        for tech, time, out in [
-            ("T1", "08:00", "10:15"),
-            ("T3", "08:00", "08:00"),
-        ]:
-            assert scheduler.get_technician_available_time(tech, time) == out
+        assert scheduler.get_technician_available_time(s1, "08:00") == "10:15"
+        assert scheduler.get_technician_available_time(s2, "08:00") == "09:45"
 
     def test_get_equipment_available_time(self):
         equipments = [

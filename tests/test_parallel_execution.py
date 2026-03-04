@@ -23,6 +23,7 @@ class TestParallelExecution(unittest.TestCase):
         schedule = Scheduler(samples, technicians, equipments)
         schedule.planify()
         result = schedule.get_schedule()
+        print(result)
 
         self.assertEqual(result[0]["sampleId"], "S1")
         self.assertEqual(result[0]["technicianId"], "T003")
