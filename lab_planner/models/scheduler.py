@@ -1,9 +1,6 @@
 from lab_planner.planner.utils import add_minutes
 from lab_planner.planner.utils import latest_time
-from datetime import datetime
 from itertools import chain
-
-fmt = "%H:%M"
 
 
 class Scheduler:
@@ -18,6 +15,8 @@ class Scheduler:
         self.sort_samples_by_priority()
         for sample in self.samples:
             self.add_sample_to_schedule(sample)
+        # On ordonne en fonction de l'heure de début
+        self.schedule.sort(key=lambda s: s["startTime"])
 
     def sort_samples_by_priority(self):
         # Triage des samples
@@ -29,7 +28,7 @@ class Scheduler:
         for case in range(3):
             list_priority[case] = sorted(
                 list_priority[case],
-                key=lambda s: datetime.strptime(s.get_arrival(), fmt),
+                key=lambda s: s.get_arrival(),
             )
         self.samples = list(chain.from_iterable(list_priority))
 
@@ -70,12 +69,9 @@ class Scheduler:
             technicians,
             key=lambda tech: (
                 "GENERAL" in tech.get_speciality(),
-                datetime.strptime(
-                    self.get_technician_available_time(
-                        tech.get_id(),
-                        latest_time(sample.get_arrival(), tech.get_start()),
-                    ),
-                    fmt,
+                self.get_technician_available_time(
+                    tech.get_id(),
+                    latest_time(sample.get_arrival(), tech.get_start()),
                 ),
             ),
         )
@@ -121,21 +117,37 @@ class Scheduler:
     def get_equipment_available_time(
         self, equipment_id: str, start_time: str, duration: int, capacity: int
     ) -> str:
-        # Retourne le créneau disponible pour l'équipement
-        current_start = start_time
+        equipment = next(
+            equipment
+            for equipment in self.equipment
+            if equipment.get_id() == equipment_id
+        )
+
+        maintenance_start = equipment.get_maintenance_start()
+        maintenance_duration = equipment.get_maintenance_duration()
+        maintenance_end = add_minutes(maintenance_start, maintenance_duration)
+        start = start_time
         while True:
+            end = add_minutes(start, duration)
+
+            # Blocage de la maintenance (chevauchement)
+            if (
+                maintenance_start
+                and start < maintenance_end
+                and end > maintenance_start
+            ):
+                start = maintenance_end
+                continue
+            # Vérifier capacité (parallèle ou dispo)
             running = sum(
                 1
                 for s in self.schedule
                 if s["equipmentId"] == equipment_id
-                and not (
-                    s["endTime"] <= current_start
-                    or add_minutes(current_start, duration) <= s["startTime"]
-                )
+                and not (s["endTime"] <= start or end <= s["startTime"])
             )
             if running < capacity:
-                return current_start
-            current_start = add_minutes(current_start, 1)
+                return start
+            start = add_minutes(start, 1)
 
     def get_technician_available_time(
         self, technician_id: str, default_start: str

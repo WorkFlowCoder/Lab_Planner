@@ -57,3 +57,7 @@ sh run_tests.sh
 - Calcul du temps moyen d'attente
 
 - Utilisation en parrallèle de l'équippement via la capacité
+
+- triage des equipements par heure de début (afin de traiter au plus vite les STAT)
+
+- Mise en place de la maintenance

@@ -1,4 +1,8 @@
 class Technician:
+    LUNCH_BREAK_START = "12:00"
+    LUNCH_BREAK_END = "15:00"
+    LUNCH_DURATION = 60  # 1 heure
+
     def __init__(
         self,
         id: str,
@@ -7,7 +11,6 @@ class Technician:
         startTime: str,
         endTime: str,
         efficiency: float = 1.0,
-        lunchBreak: str = "",
     ):
         self.id = id
         self.name = name
@@ -18,7 +21,6 @@ class Technician:
         self.startTime = startTime
         self.endTime = endTime
         self.efficiency = efficiency
-        self.lunchBreak = lunchBreak
 
     # --- Getters ---
 

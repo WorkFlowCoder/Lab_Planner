@@ -2,10 +2,7 @@ from lab_planner.models.sample import Sample
 from lab_planner.models.technician import Technician
 from lab_planner.models.equipment import Equipment
 from pathlib import Path
-from datetime import datetime, timedelta
 import json
-
-fmt = "%H:%M"
 
 
 def load_data_as_objects(file: str):
@@ -34,7 +31,6 @@ def load_data_as_objects(file: str):
             startTime=technician["startTime"],
             endTime=technician["endTime"],
             efficiency=technician.get("efficiency", 1.0),
-            lunchBreak=technician.get("lunchBreak", ""),
         )
         for technician in data.get("technicians", [])
     ]
@@ -54,28 +50,30 @@ def load_data_as_objects(file: str):
 
 
 def latest_time(time1: str, time2: str) -> str:
-    t1 = datetime.strptime(time1, fmt).time()
-    t2 = datetime.strptime(time2, fmt).time()
-    return max(t1, t2).strftime(fmt)
+    return max(time1, time2)
 
 
 def earliest_time(time1: str, time2: str) -> str:
-    t1 = datetime.strptime(time1, fmt).time()
-    t2 = datetime.strptime(time2, fmt).time()
-    return min(t1, t2).strftime(fmt)
+    return min(time1, time2)
+
+
+def to_minutes(time_str: str) -> int:
+    h, m = map(int, time_str.split(":"))
+    return h * 60 + m
+
+
+def to_time_str(total_minutes: int) -> str:
+    h = total_minutes // 60
+    m = total_minutes % 60
+    return f"{h:02d}:{m:02d}"
 
 
 def minutes_between(start_time: str, end_time: str) -> int:
-    t1 = datetime.strptime(start_time, fmt)
-    t2 = datetime.strptime(end_time, fmt)
-    delta = t2 - t1
-    return int(delta.total_seconds() / 60)
+    return to_minutes(end_time) - to_minutes(start_time)
 
 
 def add_minutes(time_str: str, minutes: int) -> str:
-    t = datetime.strptime(time_str, fmt)
-    t += timedelta(minutes=minutes)
-    return t.strftime(fmt)
+    return to_time_str(to_minutes(time_str) + minutes)
 
 
 def get_full_time(schedule) -> int:
