@@ -36,6 +36,24 @@ class Scheduler:
     def get_samples(self) -> list:
         return self.samples
 
+    def find_equipments(self, sample):
+        compatibles = [
+            e
+            for e in self.equipment
+            if e.get_type() == sample.get_type() and e.get_available()
+        ]
+
+        # Objectif : temps d'attente minimal
+        compatibles.sort(
+            key=lambda equipment: self.get_equipment_available_time(
+                equipment.get_id(),
+                sample.get_arrival(),
+                sample.analysisTime,
+                equipment.capacity,
+            )
+        )
+        return compatibles
+
     def find_technicians(self, sample) -> list:
         technicians = [
             t
@@ -63,47 +81,12 @@ class Scheduler:
         )
         return technicians
 
-    def find_equipment(self, sample, technician):
-        arrival_time = sample.get_arrival()
-        technician_arrival = technician.get_start()
-        compatible_equipment = [
-            e  # un équipement
-            for e in self.equipment
-            if (e.get_type() == sample.get_type() and e.get_available())
-        ]
-        # Trouver le premier équipement compatible
-        for equipment in compatible_equipment:
-
-            arrival_time = sample.get_arrival()
-            technician_arrival = technician.get_start()
-            tech_time = latest_time(arrival_time, technician_arrival)
-            # Vérifier combien d'analyses sont en cours sur l'équipement
-            equip_id = equipment.get_id()
-            usage = self.current_usage_equipment(equip_id, tech_time)
-            if usage < equipment.get_capacity():
-                sample.equipment_id = equip_id
-                return equipment
-        return compatible_equipment[0]
-
-    def current_usage_equipment(self, equipment_id: str, time: str) -> int:
-        count = 0
-        for operation in self.schedule:
-            if operation["equipmentId"] == equipment_id:
-                if operation["startTime"] <= time < operation["endTime"]:
-                    count += 1
-        return count
-
     def add_sample_to_schedule(self, sample):
         # Recherche des techniciens
         technicians = self.find_technicians(sample)
         sample.technician_id = technicians[0].get_id()
         # Sélection de l'équipement compatible
-        equipements = [
-            e
-            for e in self.equipment
-            if e.get_type() == sample.get_type() and e.get_available()
-        ]
-        # Choisir le premier équipement (optimisation locale possible)
+        equipements = self.find_equipments(sample)
         equipment = equipements[0]
         sample.equipment_id = equipment.get_id()
 
