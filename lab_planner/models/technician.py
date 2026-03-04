@@ -1,12 +1,14 @@
 class Technician:
-    def __init__(self, id: str, name: str, speciality: str, startTime: str, endTime: str):
+    def __init__(
+        self, id: str, name: str, speciality: str, startTime: str, endTime: str
+    ):
         self.id = id
         self.name = name
         self.speciality = speciality
         self.startTime = startTime
         self.endTime = endTime
 
-# --- Getters ---
+    # --- Getters ---
 
     def get_id(self) -> str:
         return self.id
@@ -22,7 +24,7 @@ class Technician:
 
     def get_endTime(self) -> str:
         return self.endTime
-    
+
     def to_string(self) -> str:
         return (
             f"[Technician_id={self.id}, name={self.name}, speciality={self.speciality}, "

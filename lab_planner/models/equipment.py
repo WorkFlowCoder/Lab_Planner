@@ -5,7 +5,7 @@ class Equipment:
         self.type = type
         self.available = available
 
-# --- Getters ---
+    # --- Getters ---
 
     def get_id(self) -> str:
         return self.id
@@ -18,7 +18,7 @@ class Equipment:
 
     def get_available(self) -> bool:
         return self.available
-    
+
     def to_string(self) -> str:
         return (
             f"[Equipement_id={self.id}, name={self.name}, type={self.type}, "

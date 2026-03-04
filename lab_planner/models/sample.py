@@ -1,5 +1,13 @@
 class Sample:
-    def __init__(self, id: str, type: str, priority: str, analysisTime: int, arrivalTime: str, patientId: str):
+    def __init__(
+        self,
+        id: str,
+        type: str,
+        priority: str,
+        analysisTime: int,
+        arrivalTime: str,
+        patientId: str,
+    ):
         self.id = id
         self.type = type
         self.priority = priority
@@ -11,8 +19,8 @@ class Sample:
         self.equipment_id = None
         self.start_time = None
         self.end_time = None
-    
-# --- Getters ---
+
+    # --- Getters ---
 
     def get_id(self) -> str:
         return self.id
@@ -20,7 +28,7 @@ class Sample:
     def get_type(self) -> str:
         return self.type
 
-    def get_priority(self)-> str:
+    def get_priority(self) -> str:
         return self.priority
 
     def get_analysisTime(self) -> int:
@@ -31,7 +39,7 @@ class Sample:
 
     def get_patientId(self) -> str:
         return self.patientId
-    
+
     def to_string(self) -> str:
         return (
             f"[Sample_id={self.id}, type={self.type}, priority={self.priority}, "

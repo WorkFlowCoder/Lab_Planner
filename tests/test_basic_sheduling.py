@@ -2,9 +2,12 @@ import unittest
 
 from lab_planner.planner.planify_lab import planify_lab
 from lab_planner.planner.utils import load_data_as_objects
+from lab_planner.models.scheduler import Scheduler
+from lab_planner.models.metrics import Metrics
+from lab_planner.models.sample import Sample
 
 
-class TestPlanifyLab(unittest.TestCase):
+class TestBasicSheduling(unittest.TestCase):
 
     def test_simple_example(self):
         path = "example.json"
@@ -81,3 +84,89 @@ class TestPlanifyLab(unittest.TestCase):
         # 135/105*100 = 128.6
         self.assertEqual(metrics["efficiency"], 128.6)
         self.assertEqual(metrics["conflicts"], 0)
+
+    def test_calculate_conflicts(self):
+        s1 = Sample("S1", "BLOOD", "ROUTINE", 30, "08:00", "P1")
+        s2 = Sample("S2", "URINE", "STAT", 20, "08:10", "P2")
+        s3 = Sample("S3", "BLOOD", "URGENT", 15, "08:20", "P3")
+        sheduler = Scheduler([s1, s2, s3], [], [])
+        sheduler.set_schedule(
+            [
+                {
+                    "technicianId": "T1",
+                    "equipmentId": "E1",
+                    "startTime": "09:00",
+                    "endTime": "10:00",
+                },
+                {
+                    "technicianId": "T1",
+                    "equipmentId": "E2",
+                    "startTime": "09:30",
+                    "endTime": "10:30",
+                },  # conflict
+                {
+                    "technicianId": "T2",
+                    "equipmentId": "E1",
+                    "startTime": "09:45",
+                    "endTime": "10:15",
+                },  # conflict
+            ]
+        )
+        metric = Metrics(sheduler)
+        metric.compute()
+        assert metric.conflicts == 2
+
+    def test_calculate_conflicts_2(self):
+        s1 = Sample("S1", "BLOOD", "ROUTINE", 30, "08:00", "P1")
+        s2 = Sample("S2", "URINE", "STAT", 20, "08:10", "P2")
+        s3 = Sample("S3", "BLOOD", "URGENT", 15, "08:20", "P3")
+        sheduler = Scheduler([s1, s2, s3], [], [])
+        sheduler.set_schedule(
+            [
+                {
+                    "technicianId": "T1",
+                    "equipmentId": "E1",
+                    "startTime": "09:00",
+                    "endTime": "10:00",
+                },
+                {
+                    "technicianId": "T1",
+                    "equipmentId": "E2",
+                    "startTime": "10:00",
+                    "endTime": "10:30",
+                },
+                {
+                    "technicianId": "T2",
+                    "equipmentId": "E1",
+                    "startTime": "10:30",
+                    "endTime": "10:45",
+                },
+            ]
+        )
+        metric = Metrics(sheduler)
+        metric.compute()
+        assert metric.conflicts == 0
+
+    def test_get_technician_available_time(self):
+        scheduler = Scheduler([], [], [])
+        scheduler.set_schedule(
+            [
+                {"technicianId": "T1", "endTime": "09:30"},
+                {"technicianId": "T1", "endTime": "10:15"},
+                {"technicianId": "T2", "endTime": "09:45"},
+            ]
+        )
+        assert scheduler.get_technician_available_time("T1", "08:00") == "10:15"
+        assert scheduler.get_technician_available_time("T3", "08:00") == "08:00"
+
+    def test_get_equipment_available_time(self):
+        scheduler = Scheduler([], [], [])
+        scheduler.set_schedule(
+            [
+                {"equipmentId": "E1", "endTime": "09:30"},
+                {"equipmentId": "E1", "endTime": "10:15"},
+                {"equipmentId": "E2", "endTime": "09:45"},
+            ]
+        )
+        assert scheduler.get_equipment_available_time("E1", "08:00") == "10:15"
+        assert scheduler.get_equipment_available_time("E3", "08:00") == "08:00"

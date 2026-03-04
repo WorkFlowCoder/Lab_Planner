@@ -2,6 +2,7 @@ from lab_planner.planner.planify_lab import planify_lab
 from lab_planner.planner.utils import load_data_as_objects
 import json
 
+
 def main():
     try:
         data = load_data_as_objects("example_3.json")
@@ -13,7 +14,8 @@ def main():
         return
 
     result = planify_lab(data)
-    #print(result)
+    print(result)
+
 
 if __name__ == "__main__":
     main()
